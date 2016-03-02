@@ -15,3 +15,19 @@ becrest.rest_controller_Rest:
     _title: 'Rest'
   requirements:
     _permission: 'access content'
+
+becrest.rest_controller_Rest_comentarios:
+  path: 'rest/coment/{nodo}'
+  defaults:
+    _controller: '\Drupal\becrest\Controller\RestController::Rest_comentarios'
+    _title: 'Rest comentarios'
+  requirements:
+    _permission: 'access content'
+
+becrest.rest_controller_Rest_nodo:
+  path: 'rest/nodo/{nodo}'
+  defaults:
+    _controller: '\Drupal\becrest\Controller\RestController::Rest_nodo'
+    _title: 'Rest Nodos'
+  requirements:
+    _permission: 'access content'
