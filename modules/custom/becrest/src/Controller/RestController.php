@@ -75,6 +75,33 @@ class RestController extends ControllerBase {
   {
     $query = db_select('node_field_data', 'n');
     $query->join('node__body', 'nb', 'n.nid=nb.entity_id');
+    $query->fields('n', array('nid','title','created','langcode'))
+          ->fields('nb', array('body_value'))
+          ->condition('n.status', 1)
+          ->condition('nid', $nodo)
+          ->orderBy('created', 'DESC');
+    $result = $query->execute();
+    $articulos = array();
+    
+    while($registro = $result->fetchAssoc()) {
+      $date=format_date($registro['created'],'custom','j M Y');
+      $title=$registro['title'];
+      $idioma=$registro['langcode'];
+      $content=$registro['body_value'];
+      $articulos[$registro['nid']] = array(
+        'title' => $title,
+        'date' => $date,
+        'lang' => $idioma,
+        'contenido' => $content,
+      );
+    }
+    return new JsonResponse($articulos);
+  }
+  
+  public function Rest_img($nodo)
+  {
+    $query = db_select('node_field_data', 'n');
+    $query->join('node__body', 'nb', 'n.nid=nb.entity_id');
     $query->join('node__field_image', 'nfi', 'n.nid=nfi.entity_id');
     $query->join('file_managed', 'fm', 'nfi.field_image_target_id=fm.fid');
     $query->fields('n', array('nid','title','created','langcode'))

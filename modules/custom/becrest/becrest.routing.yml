@@ -31,3 +31,11 @@ becrest.rest_controller_Rest_nodo:
     _title: 'Rest Nodos'
   requirements:
     _permission: 'access content'
+
+becrest.rest_controller_Rest_img:
+  path: 'rest/img/{nodo}'
+  defaults:
+    _controller: '\Drupal\becrest\Controller\RestController::Rest_img'
+    _title: 'Rest Images'
+  requirements:
+    _permission: 'access content'
