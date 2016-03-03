@@ -147,22 +147,22 @@ class RestController extends ControllerBase {
         '#markup' => $this->t("Error al publicar comentario")
       ];  
     }
-    $cids = \Drupal::entityQuery('comment')
-          ->condition('entity_id', $nid)
-          ->condition('entity_type', 'node')
-          ->sort('cid', 'ASC')
-          ->execute();
-
-    if (!empty($cids))
+    //-----------------------------
+    $query = db_select('comment', 'c');
+    $query->fields('c', array('cid'))
+          ->orderBy('cid', 'ASC');
+    $result = $query->execute();
+    
+    if (!empty($result))
     {
-      foreach($cids as $cid) {
-        $comment = Comment::load($cid);
+      while($registro = $result->fetchAssoc()) {
+        $cid=$registro['cid'];
       }
-      $cidNuevo=strval(intval($comment->get('cid')->value)+1);
+      $cidNuevo=strval(intval($cid)+1);
     }
     else
       $cidNuevo="1";
-
+    //-----------------------------
     $comentarioNuevo=array(
         'cid' => $cidNuevo,
         'entity_id' => $nid,
