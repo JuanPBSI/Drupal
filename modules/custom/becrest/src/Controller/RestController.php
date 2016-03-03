@@ -131,4 +131,27 @@ class RestController extends ControllerBase {
     }
     return new JsonResponse($articulos);
   }
+  
+  public function Rest_comentar()
+  {
+    $com = $_POST['comentario'];
+    $nid = $_POST['nodo'];
+    $comment = new stdClass();
+    $comment = (object) array(
+            'nid' => $nid,
+            'is_anonymous' => 1,
+            'status' => COMMENT_PUBLISHED,
+            'language' => LANGUAGE_NONE,
+            'comment_body' => array(
+            LANGUAGE_NONE => array(
+                        0 => array(
+                              'value' => $com,
+                              'format' => 'filtered_html'
+                              )
+                        )
+            ),
+    );
+    comment_submit($comment);
+    comment_save($comment);
+  }
 }
