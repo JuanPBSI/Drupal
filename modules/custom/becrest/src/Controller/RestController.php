@@ -11,6 +11,9 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Database;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use \stdClass;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\comment\Entity\Comment;
 
 /**
  * Class RestController.
@@ -136,22 +139,48 @@ class RestController extends ControllerBase {
   {
     $com = $_POST['comentario'];
     $nid = $_POST['nodo'];
-    $comment = new stdClass();
-    $comment = (object) array(
-            'nid' => $nid,
-            'is_anonymous' => 1,
-            'status' => COMMENT_PUBLISHED,
-            'language' => LANGUAGE_NONE,
-            'comment_body' => array(
-            LANGUAGE_NONE => array(
-                        0 => array(
-                              'value' => $com,
-                              'format' => 'filtered_html'
-                              )
-                        )
-            ),
+
+    if (empty($nid))
+    {
+      return [
+        '#type' => 'markup',
+        '#markup' => $this->t("Error al publicar comentario")
+      ];  
+    }
+    $cids = \Drupal::entityQuery('comment')
+          ->condition('entity_id', $nid)
+          ->condition('entity_type', 'node')
+          ->sort('cid', 'ASC')
+          ->execute();
+
+    if (!empty($cids))
+    {
+      foreach($cids as $cid) {
+        $comment = Comment::load($cid);
+      }
+      $cidNuevo=strval(intval($comment->get('cid')->value)+1);
+    }
+    else
+      $cidNuevo="1";
+
+    $comentarioNuevo=array(
+        'cid' => $cidNuevo,
+        'entity_id' => $nid,
+        'langcode' => 'en',
+        'subject' => "Mensaje Anonimo",
+        'name' => "Anonimo",
+        "status" => "1",
+        "thread" => "02\/",
+        "entity_type" => "node",
+        "field_name" => "comment",
+        "comment_body" => $com
     );
-    comment_submit($comment);
-    comment_save($comment);
+    
+    $comment2=Comment::create($comentarioNuevo);
+    $comment2->save();
+    return [
+        '#type' => 'markup',
+        '#markup' => $this->t("Comentario posteado")
+    ];
   }
 }

@@ -40,7 +40,7 @@ becrest.rest_controller_Rest_img:
   requirements:
     _permission: 'access content'
 
-becrest.rest_controller_Rest_img:
+becrest.rest_controller_Rest_comentar:
   path: 'rest/comentar'
   defaults:
     _controller: '\Drupal\becrest\Controller\RestController::Rest_comentar'
