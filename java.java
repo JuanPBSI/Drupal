@@ -1,10 +1,12 @@
-            String query = "SELECT * FROM employee WHERE userid = " + userId + " and password = '" + password + "'";
+            String query = "SELECT * FROM employee WHERE userid = ? and password = ?";
 
 			try
             {
-                Statement answer_statement = WebSession.getConnection(s)
-                        .createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                ResultSet answer_results = answer_statement.executeQuery(query);
+                Connection connection = WebSession.getConnections(s);
+				PreparedStatement statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				statement.setString(1, userId);
+				statement.setString(2, password);
+				ResultSet answer_results = statement.executeQuery();
                 if (answer_results.first())
                 {
                     setSessionAttribute(s, getLessonName() + ".isAuthenticated", Boolean.TRUE);
